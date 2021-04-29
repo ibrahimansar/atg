@@ -1,6 +1,6 @@
 import React from "react";
-import { View, Dimensions, StyleSheet} from "react-native";
-import { Image } from "react-native-expo-image-cache";
+import { View, Dimensions, Image, StyleSheet} from "react-native";
+// import { Image } from "react-native-expo-image-cache";
 import FastImage from 'react-native-fast-image';
 
 function Card({imageUrl}) {
@@ -8,10 +8,7 @@ function Card({imageUrl}) {
       <View style={styles.card}>
         <FastImage
           style={styles.image}
-          source={{
-            uri: {imageUrl},
-            priority: FastImage.priority.normal
-          }}
+          source={{ uri: imageUrl, priority: FastImage.priority.normal }}
           resizeMode={FastImage.resizeMode.contain}        
         />
         {/* <Image
