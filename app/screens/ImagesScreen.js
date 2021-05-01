@@ -1,15 +1,23 @@
 import React, { useEffect, useState } from 'react';
-import { FlatList, StyleSheet, Text, SafeAreaView } from 'react-native';
+import { FlatList, StyleSheet, Text, SafeAreaView, Button } from 'react-native';
 import Card from "../component/Card";
 import Header from "../component/Header";
-import Constants from "expo-constants"
+import Constants from "expo-constants";
+import Apis from "../APIs/Apis";
+import useApi from "../hooks/useApi";
 
 export default ImagesScreen = ({ navigation }) => {
   const [isLoading, setLoading] = useState(true);
   const [data, setData] = useState([]);
 
+  const getApis = useApi(Apis.url)
+
   useEffect(() => {
-    fetch('https://api.flickr.com/services/rest/?method=flickr.photos.getRecent&per_page=20&page=1&api_key=6f102c62f41998d151e5a1b48713cf13&format=json&nojsoncallback=1&extras=url_s')
+    getApis.request();
+  })
+
+  useEffect(() => {
+    fetch(Apis.url)
       .then((response) => response.json())
       .then((json) => setData(json.photos))
       .catch((error) => console.error(error))
@@ -18,10 +26,17 @@ export default ImagesScreen = ({ navigation }) => {
 
   return (
     <SafeAreaView style={styles.screen}>
+        {getApis.error && (
+          <>
+            <AppText>Couldn't retrieve the listings.</AppText>
+            <Button title="Retry" onPress={getApis.request} />
+          </>
+        )}
+
       {isLoading ? <Text>Loading...</Text> : 
       (
         <>
-        <Header title = "Home" navigation={navigation}/>
+        <Header title = "Home" navigation={navigation}/> 
           <FlatList
             data={data.photo}
             numColumns= '2'
@@ -32,8 +47,9 @@ export default ImagesScreen = ({ navigation }) => {
                />
             )}
           />
+          <Button title = "Reload" onPress={getApis.request}/>
         </>  
-      )}
+      )}        
     </SafeAreaView>
   );
 }
